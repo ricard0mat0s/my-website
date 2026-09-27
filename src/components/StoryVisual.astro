@@ -1,0 +1,39 @@
+---
+interface Props { stage: 'problem' | 'approach' | 'approval'; caption: string; }
+const { stage, caption } = Astro.props;
+---
+<figure class:list={['story-visual', `visual-${stage}`]}>
+  {stage === 'problem' && <div class="session-scene">
+    <div class="session-sheet earlier-session">
+      <div class="sheet-header"><span class="session-dot"></span>Earlier session<span class="sheet-symbol" aria-hidden="true">↗</span></div>
+      <p>Building a project together.</p>
+      <div class="context-tags"><span>The problem</span><span>The decisions</span><span>The details</span></div>
+    </div>
+    <div class="context-gap"><span aria-hidden="true"></span><p>Context to reconstruct</p><span aria-hidden="true"></span></div>
+    <div class="session-sheet new-session">
+      <div class="sheet-header"><span class="session-dot"></span>New session<span class="sheet-symbol" aria-hidden="true">↗</span></div>
+      <p>Now, let’s write my résumé.</p>
+      <div class="session-question"><span aria-hidden="true">↳</span> Can you recap your projects?</div>
+    </div>
+  </div>}
+  {stage === 'approach' && <div class="shared-scene">
+    <div class="memory-page">
+      <div class="sheet-header"><span class="markdown-mark" aria-hidden="true">M↓</span>projects.md</div>
+      <p>Context worth keeping.</p>
+      <ul><li>What I’m building</li><li>Decisions I’ve made</li><li>What’s still open</li></ul>
+      <span class="file-footnote">Persistent Markdown</span>
+    </div>
+    <div class="memory-bridge"><span>MCP server</span></div>
+    <div class="agent-pair"><div><span class="agent-glyph" aria-hidden="true">✳</span><p>This session</p><span>Find & read</span></div><div><span class="agent-glyph" aria-hidden="true">↗</span><p>Another agent</p><span>Find & read</span></div></div>
+  </div>}
+  {stage === 'approval' && <div class="review-scene">
+    <div class="proposal-sheet">
+      <div class="sheet-header"><span class="session-dot"></span>Proposed update<span class="review-badge">For review</span></div>
+      <p class="proposal-file">projects.md</p>
+      <div class="proposed-line"><span aria-hidden="true">+</span><p>A new project decision</p></div>
+      <p class="proposal-note">The file hasn’t changed yet.</p>
+    </div>
+    <div class="approval-path"><span class="path-line" aria-hidden="true"></span><div class="approval-gate"><span aria-hidden="true">✓</span>My review & approval</div><span class="path-line" aria-hidden="true"></span><div class="saved-memory"><span aria-hidden="true">↳</span> Apply to memory</div></div>
+  </div>}
+  <figcaption>{caption}</figcaption>
+</figure>

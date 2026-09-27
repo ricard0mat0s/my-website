@@ -1,0 +1,22 @@
+---
+import { withBase } from '../lib/urls';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, kindLabels } from '../lib/publication';
+import Icon from './Icon.astro';
+interface Props { notes: CollectionEntry<'notes'>[]; }
+const { notes } = Astro.props;
+---
+{notes.length > 0 ? (
+  <ol class="note-list">
+    {notes.map(({ id, data }) => (
+      <li>
+        <article class="note-row">
+          <div class="note-date"><time datetime={data.published}>{formatDate(data.published!)}</time><span>{kindLabels[data.kind]}</span></div>
+          <div class="note-summary"><h3><a href={withBase(`/writing/${id}/`)}>{data.title}<Icon name="arrow" size={18} /></a></h3><p>{data.summary}</p><ul class="topic-labels" aria-label="Topics">{data.topics.map(topic => <li>{topic}</li>)}</ul></div>
+        </article>
+      </li>
+    ))}
+  </ol>
+) : (
+  <div class="notes-empty"><p>No notes published yet.</p><p>For now, start with <a href={withBase('/projects/personal-memory/')}>the thinking behind personal-memory <span aria-hidden="true">↗</span></a>—the problem, the approach, and the tradeoffs.</p></div>
+)}

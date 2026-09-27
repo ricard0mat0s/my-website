@@ -1,0 +1,45 @@
+---
+import { withBase } from '../lib/urls';
+import { getCollection } from 'astro:content';
+import { publishedNotes } from '../lib/publication';
+import { site } from '../config';
+import '@fontsource-variable/dm-sans';
+import '@fontsource/instrument-serif/latin-400.css';
+import '../styles/global.css';
+
+interface Props { title?: string; description?: string; section?: 'projects' | 'writing'; article?: boolean; }
+const { title = site.title, description = site.description, section, article = false } = Astro.props;
+const hasNotes = publishedNotes(await getCollection('notes')).length > 0;
+const home = Astro.url.pathname === withBase('/');
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f6f2" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <><link rel="canonical" href={canonical} /><meta property="og:url" content={canonical} /></>}
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header container">
+      <a class="wordmark" href={home ? '#top' : withBase('/')} aria-label="Ricardo — home">r<span>.</span></a>
+      <nav class="glass-nav" aria-label="Main navigation">
+        <a href={home ? '#projects' : withBase('/#projects')} aria-current={section === 'projects' ? 'true' : undefined}>Projects</a>
+        {hasNotes && <a href={home ? '#writing' : withBase('/writing/')} aria-current={section === 'writing' ? 'true' : undefined}>Writing</a>}
+        <a href={home ? '#contact' : withBase('/#contact')}>Contact</a>
+      </nav>
+    </header>
+    <main id="main" class="container" tabindex="-1"><slot /></main>
+    <footer class="site-footer container"><a href={withBase('/')} class="footer-name">{site.name}<span>.</span></a><p>Building, studying, sharing.</p><a href="#top" class="back-top">Back to top <span aria-hidden="true">↑</span></a></footer>
+  </body>
+</html>

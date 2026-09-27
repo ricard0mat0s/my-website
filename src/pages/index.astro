@@ -1,0 +1,76 @@
+---
+import { withBase } from '../lib/urls';
+import { getCollection } from 'astro:content';
+import { Content as Introduction, frontmatter as intro } from '../content/home/intro.md';
+import { Content as ProjectClosing, frontmatter as story } from '../content/home/project.md';
+import { Content as Contact, frontmatter as contact } from '../content/home/contact.md';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+import StoryVisual from '../components/StoryVisual.astro';
+import NoteList from '../components/NoteList.astro';
+import { publishedNotes } from '../lib/publication';
+import { site } from '../config';
+
+const notes = publishedNotes(await getCollection('notes'));
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id));
+const featured = projects.find(project => project.id === story.project);
+if (!featured) throw new Error(`The homepage featured project "${story.project}" must exist and have draft: false.`);
+const moreProjects = projects.filter(project => project.id !== featured.id);
+---
+<SiteLayout>
+  <section class="intro" aria-labelledby="intro-heading">
+    <p class="intro-greeting"><span class="tiny-star" aria-hidden="true">✳</span>{intro.eyebrow}</p>
+    <h1 id="intro-heading">{intro.title} <span>{intro.accent}</span></h1>
+    <p class="intro-aside">{intro.aside}</p>
+    <div class="intro-copy"><Introduction /></div>
+    <div class="intro-actions">
+      <a class="text-link" href="#projects">Here’s what I’m building <Icon name="down" size={17} /></a>
+      {notes.length > 0 && <a class="text-link" href="#writing">Read my notes <Icon name="down" size={17} /></a>}
+    </div>
+  </section>
+
+  <article id="projects" class="project-story" aria-label={`The story behind ${featured.data.title}`}>
+    <span id="building" class="anchor-alias" aria-hidden="true"></span>
+    <header class="story-heading">
+      <p>Behind the project <span aria-hidden="true">/</span> <a href={withBase(`/projects/${featured.id}/`)}>{featured.data.title}</a></p>
+      <span class="status"><span aria-hidden="true"></span>{featured.data.status}</span>
+    </header>
+    {story.chapters.map((chapter: { id: 'problem' | 'approach' | 'approval'; label: string; title: string; text: string; takeaway: string; caption: string }, index: number) => (
+      <section class:list={['story-chapter', `chapter-${chapter.id}`]} aria-labelledby={`${chapter.id}-heading`}>
+        <div class="chapter-copy">
+          <p class="chapter-label"><span aria-hidden="true">0{index + 1}</span>{chapter.label}</p>
+          <h2 id={`${chapter.id}-heading`}>{chapter.title}</h2>
+          <p class="chapter-text">{chapter.text}</p>
+          <p class="chapter-takeaway">{chapter.takeaway}</p>
+        </div>
+        <StoryVisual stage={chapter.id} caption={chapter.caption} />
+      </section>
+    ))}
+    <footer class="story-closing">
+      <div class="prose"><ProjectClosing /></div>
+      <div class="project-actions">
+        <a class="primary-link" href={withBase(`/projects/${featured.id}/`)}>{story.linkLabel}<Icon name="arrow" size={17} /></a>
+        {featured.data.repository && <a class="text-link secondary-link" href={featured.data.repository}>GitHub <Icon name="arrow" size={15} /></a>}
+      </div>
+    </footer>
+  </article>
+
+  {moreProjects.length > 0 && <section class="more-projects" aria-labelledby="more-projects-heading">
+    <div class="section-heading"><h2 id="more-projects-heading">More things I’m building.</h2></div>
+    <ul class="project-list">{moreProjects.map(project => <li>
+      <div><p class="eyebrow">{project.data.status}</p><h3><a href={withBase(`/projects/${project.id}/`)}>{project.data.title}<Icon name="arrow" size={20} /></a></h3><p>{project.data.description}</p></div>
+    </li>)}</ul>
+  </section>}
+
+  {notes.length > 0 && <section id="writing" class="writing section" aria-labelledby="writing-heading">
+    <div class="section-heading"><div><p class="eyebrow section-kicker">What I’m learning along the way</p><h2 id="writing-heading">Latest notes</h2></div><a class="text-link" href={withBase('/writing/')}>All writing <Icon name="arrow" size={16} /></a></div>
+    <NoteList notes={notes.slice(0, 3)} />
+  </section>}
+
+  <section id="contact" class="connect section" aria-labelledby="contact-heading">
+    <span id="connect" class="anchor-alias" aria-hidden="true"></span>
+    <div><p class="eyebrow">Over to you</p><h2 id="contact-heading">{contact.title}</h2><div class="contact-copy"><Contact /></div></div>
+    <div class="contact-links"><a class="email-button" href={`mailto:${site.email}`}><Icon name="mail" size={18} />{contact.linkLabel}</a><a class="text-link" href={site.github}>GitHub <Icon name="arrow" size={15} /></a><a class="text-link" href={site.linkedin}>LinkedIn <Icon name="arrow" size={15} /></a></div>
+  </section>
+</SiteLayout>

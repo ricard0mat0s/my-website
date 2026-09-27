@@ -1,0 +1,12 @@
+---
+import { withBase } from '../../lib/urls';
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import NoteList from '../../components/NoteList.astro';
+import { publishedNotes } from '../../lib/publication';
+const notes = publishedNotes(await getCollection('notes'));
+---
+<SiteLayout title="Writing — Ricardo" description="Notes, experiments, and articles about what I’m building and studying." section="writing">
+  <header class="reading-header"><a href={withBase('/')} class="text-link breadcrumb">← Home</a><p class="eyebrow">The notebook</p><h1>Writing</h1><p class="reading-deck">Experiments, explanations, and questions along the way.</p></header>
+  <section class="writing-archive" aria-label="Published writing"><NoteList notes={notes} /></section>
+</SiteLayout>
