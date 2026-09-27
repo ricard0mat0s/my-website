@@ -4,16 +4,16 @@ The site builds with Astro and deploys through GitHub Actions. Only the generate
 
 ## First publication
 
-1. Create an **empty public repository** on GitHub under `ricard0mat0s`. Use `portfolio` for `https://ricard0mat0s.github.io/portfolio/`, or `ricard0mat0s.github.io` for `https://ricard0mat0s.github.io/`. Do not initialize it with a README, license, or `.gitignore`; the local repository already contains files and an initial commit.
+1. Create an **empty public repository** on GitHub under `ricard0mat0s`. Use `my-website` for `https://ricard0mat0s.github.io/my-website/`, or `ricard0mat0s.github.io` for `https://ricard0mat0s.github.io/`. Do not initialize it with a README, license, or `.gitignore`; the local repository already contains files and an initial commit.
 2. In the new repository, open **Settings → Pages → Build and deployment → Source**, then select **GitHub Actions**.
-3. Connect the local repository and push. For a repository named `portfolio`:
+3. The local repository’s `origin` is configured as `https://github.com/ricard0mat0s/my-website.git`. Verify it and push:
 
    ```sh
-   git remote add origin https://github.com/ricard0mat0s/portfolio.git
+   git remote -v
    git push -u origin main
    ```
 
-   Change the repository name in that URL if you chose a different name. GitHub will ask you to authenticate if your Git credentials are not configured.
+   If starting from a copy without an `origin`, run `git remote add origin https://github.com/ricard0mat0s/my-website.git` first. To change an existing remote, use `git remote set-url origin <repository-url>`. GitHub will ask you to authenticate if your Git credentials are not configured.
 
 4. Open **Actions → Deploy portfolio to GitHub Pages** and wait for the build and deploy jobs to finish. The deployment URL appears on the run and in **Settings → Pages**.
 
@@ -37,15 +37,15 @@ Draft Markdown is excluded from the generated website, **but any committed draft
 
 ## Test the repository URL locally
 
-On Bash-compatible shells, build as if the site were hosted under `/portfolio/`:
+On Bash-compatible shells, build as if the site were hosted under `/my-website/`:
 
 ```sh
-PAGES_SITE_URL=https://ricard0mat0s.github.io PAGES_BASE_PATH=/portfolio npm run build
-PAGES_SITE_URL=https://ricard0mat0s.github.io PAGES_BASE_PATH=/portfolio npm run preview
+PAGES_SITE_URL=https://ricard0mat0s.github.io PAGES_BASE_PATH=/my-website npm run build
+PAGES_SITE_URL=https://ricard0mat0s.github.io PAGES_BASE_PATH=/my-website npm run preview
 ```
 
-Open the preview URL with `/portfolio/` appended. An ordinary `npm run build` returns to local root-path output.
+Open the preview URL with `/my-website/` appended. An ordinary `npm run build` returns to local root-path output.
 
-Use site-root paths such as `/projects/personal-memory/` in Markdown. The build adds the deployment prefix; do not hard-code `/portfolio/` into content. External URLs, `mailto:` links, and `#section` anchors remain unchanged.
+Use site-root paths such as `/projects/personal-memory/` in Markdown. The build adds the deployment prefix; do not hard-code `/my-website/` into content. External URLs, `mailto:` links, and `#section` anchors remain unchanged.
 
 Sources: [Astro's GitHub Pages guide](https://docs.astro.build/en/guides/deploy/github/) and [GitHub's Astro starter workflow](https://github.com/actions/starter-workflows/blob/main/pages/astro.yml).
