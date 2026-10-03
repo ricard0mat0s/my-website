@@ -36,8 +36,4 @@ For a substantive revision, optionally add `updated: 'YYYY-MM-DD'`. It must be o
 
 Run `npm run check`, `npm run build`, and `npm run preview`. Review the full page and the homepage summary before committing. After GitHub Pages setup, pushing to `main` deploys the site automatically; see the [deployment guide](deployment.md). Keep unpublished sensitive material out of a public Git repository even when `draft: true`.
 
-## No notes yet
-
-The collection intentionally contains no articles or invented dates. The homepage omits the entire notes section until the first entry is published. That first publication adds the notes section between the projects and contact invitation, together with Writing navigation and the hero writing link. The directly accessible writing archive still explains the empty state. Astro currently logs an empty-collection warning for this intentional state; the build still succeeds.
-
 The automated publishing test creates clearly synthetic content only in a temporary project directory. It verifies both an article and a short experiment log, then removes that temporary directory. The real `src/content/notes/` and `dist/` stay free of those fixtures.

@@ -13,14 +13,15 @@ test('homepage', async ({ page }, testInfo) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText('I build software around');
   await expect(page.getByText('I’m an undergraduate researcher', { exact: false })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Skip to content' })).not.toBeInViewport();
-  await expect(page.getByRole('navigation').getByRole('link', { name: 'Writing' })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Read my notes' })).toHaveCount(0);
-  await expect(page.locator('#writing')).toHaveCount(0);
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'Writing' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Read my notes' })).toBeVisible();
+  await expect(page.locator('#writing')).toBeVisible();
   await expect(page.locator('#exploring')).toHaveCount(0);
   await expect(page.locator('.more-projects')).toHaveCount(0);
   await expect(page.getByRole('figure')).toHaveCount(3);
   await expect(page.getByRole('heading', { name: 'Help me remember. Let me decide.' })).toBeVisible();
-  await expect(page.locator('#writing time')).toHaveCount(0);
+  await expect(page.locator('#writing time')).toHaveText('3 Oct 2026');
+  await expect(page.locator('#writing').getByRole('link', { name: 'The best moment to be alive' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Say hello' })).toHaveAttribute('href', 'mailto:matosricardordg@gmail.com');
   await expect(page.locator('.contact-links').getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/ricard0mat0s');
   await expect(page.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ricard0mat0s/');
@@ -36,6 +37,16 @@ test('homepage', async ({ page }, testInfo) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: `artifacts/layouts/home-${testInfo.project.name}.png`, fullPage: true });
+});
+
+test('published note', async ({ page }) => {
+  await page.goto('/writing/the-best-moment-to-be-alive/');
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('The best moment to be alive');
+  await expect(page.locator('.article-body')).toContainText('pair-programming guide');
+  await expect(page.locator('.article-body').getByRole('link', { name: 'personal-memory' })).toHaveAttribute('href', '/projects/personal-memory/');
+  await noOverflow(page);
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
 });
 
 test('project reading and sources', async ({ page }, testInfo) => {

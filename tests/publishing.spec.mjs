@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { mkdtemp, cp, symlink, writeFile, readFile, rm, readdir } from 'node:fs/promises';
+import { mkdtemp, cp, symlink, writeFile, readFile, rm, readdir, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve, extname } from 'node:path';
 import { execFile } from 'node:child_process';
@@ -39,6 +39,8 @@ test(`published content and navigation work at ${base}`, async ({ page }, testIn
     }
     await symlink(resolve('node_modules'), join(root, 'node_modules'), 'dir');
     const notesDir = join(root, 'src/content/notes');
+    await rm(notesDir, { recursive: true, force: true });
+    await mkdir(notesDir);
     const fixture = (title, published, draft, kind, body) => `---\ntitle: ${title}\nsummary: Synthetic content used only to verify the publishing layout.\nkind: ${kind}\ntopics: [Testing, Markdown]\npublished: '${published}'\ndraft: ${draft}\nrelatedProject: personal-memory\n---\n${body}\n`;
     await writeFile(join(notesDir, 'test-article.md'), fixture('Test article with a deliberately long editorial heading', '2020-02-02', false, 'article', '## A test section\n\nThis fixture checks readable paragraphs, source links, and long-form layout.\n\n```js\nconst example = "A deliberately long line of code that should scroll inside the code block instead of widening the article or the page at narrow screen widths.";\n```\n\n## Another section\n\nA paragraph with a [related project](/projects/personal-memory/).\n\n![Fixture icon](/favicon.svg)'));
     await writeFile(join(notesDir, 'test-log.md'), fixture('Test experiment log', '2020-01-01', false, 'experiment', 'A short test log without section headings.'));
