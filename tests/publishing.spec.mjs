@@ -75,7 +75,7 @@ test(`published content and navigation work at ${base}`, async ({ page }, testIn
       await page.goto(base);
       await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', `https://ricard0mat0s.github.io${base}`);
       await expect(page.locator('link[rel=icon]')).toHaveAttribute('href', `${base}favicon.svg`);
-      await expect(page.getByRole('heading', { name: 'More things I’m building.' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Selected Projects' })).toBeVisible();
       await page.getByRole('link', { name: 'Test second project', exact: true }).click();
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Test second project');
       await expect(page.getByRole('link', { name: 'View the code' })).toHaveCount(0);
@@ -83,7 +83,7 @@ test(`published content and navigation work at ${base}`, async ({ page }, testIn
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.goto(base);
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Writing' })).toBeVisible();
-      await page.getByRole('link', { name: 'Read my notes' }).click();
+      await page.getByRole('link', { name: 'Read Notes' }).click();
       await expect(page.getByRole('heading', { name: 'Latest notes' })).toBeInViewport();
       await expect(page.locator('.note-row')).toHaveCount(2);
       await expect(page.locator('.note-row time').first()).toHaveText('2 Feb 2020');

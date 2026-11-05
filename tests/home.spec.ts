@@ -14,20 +14,21 @@ test('homepage', async ({ page }, testInfo) => {
   await expect(page.getByText('I’m an undergraduate researcher', { exact: false })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Skip to content' })).not.toBeInViewport();
   await expect(page.getByRole('navigation').getByRole('link', { name: 'Writing' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Read my notes' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Read Notes' })).toBeVisible();
   await expect(page.locator('#writing')).toBeVisible();
   await expect(page.locator('#exploring')).toHaveCount(0);
-  await expect(page.locator('.more-projects')).toHaveCount(0);
-  await expect(page.getByRole('figure')).toHaveCount(3);
-  await expect(page.getByRole('heading', { name: 'Help me remember. Let me decide.' })).toBeVisible();
+  await expect(page.locator('.project-card')).toHaveCount(1);
+  await expect(page.locator('.note-card')).toHaveCount(1);
+  await expect(page.getByRole('heading', { name: 'Selected Projects' })).toBeVisible();
+  await expect(page.locator('#projects').getByRole('link', { name: 'personal-memory' })).toBeVisible();
   await expect(page.locator('#writing time')).toHaveText('3 Oct 2026');
   await expect(page.locator('#writing').getByRole('link', { name: 'The best moment to be alive' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Say hello' })).toHaveAttribute('href', 'mailto:matosricardordg@gmail.com');
   await expect(page.locator('.contact-links').getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/ricard0mat0s');
-  await expect(page.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ricard0mat0s/');
-  await page.getByRole('link', { name: 'Here’s what I’m building' }).click();
+  await expect(page.locator('.contact-links').getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ricard0mat0s/');
+  await page.getByRole('link', { name: 'Explore Projects' }).click();
   await expect(page).toHaveURL(/#projects$/);
-  await expect(page.getByRole('heading', { name: 'Why am I explaining this again?', exact: true })).toBeInViewport();
+  await expect(page.getByRole('heading', { name: 'Selected Projects', exact: true })).toBeInViewport();
   await page.getByRole('navigation').getByRole('link', { name: 'Contact' }).click();
   await expect(page.getByRole('heading', { name: 'Let’s compare notes.' })).toBeInViewport();
   await noOverflow(page);
@@ -51,7 +52,7 @@ test('published note', async ({ page }) => {
 
 test('project reading and sources', async ({ page }, testInfo) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Read the project', exact: true }).click();
+  await page.getByRole('link', { name: 'View details' }).first().click();
   await expect(page).toHaveURL(/\/projects\/personal-memory\/$/);
   await page.evaluate(() => document.fonts.ready);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('personal-memory');
@@ -67,7 +68,7 @@ test('project reading and sources', async ({ page }, testInfo) => {
   await page.screenshot({ path: `artifacts/layouts/project-${testInfo.project.name}.png`, fullPage: true });
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Projects' }).click();
   await expect(page).toHaveURL(/\/#projects$/);
-  await expect(page.getByRole('heading', { name: 'Why am I explaining this again?', exact: true })).toBeInViewport();
+  await expect(page.getByRole('heading', { name: 'Selected Projects', exact: true })).toBeInViewport();
 });
 
 test('keyboard access and reduced motion without JavaScript', async ({ browser }, testInfo) => {
@@ -88,9 +89,9 @@ test('keyboard access and reduced motion without JavaScript', async ({ browser }
     expect(await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle)).toBe('solid');
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
     if (path === '/') {
-      await expect(page.getByRole('heading', { name: 'Help me remember. Let me decide.' })).toBeVisible();
-      await expect(page.getByText('My review & approval')).toBeVisible();
-      expect(await page.locator('.story-visual').first().evaluate(el => getComputedStyle(el).animationName)).toBe('none');
+      await expect(page.getByRole('heading', { name: 'Selected Projects' })).toBeVisible();
+      await expect(page.locator('#projects').getByRole('link', { name: 'personal-memory' })).toBeVisible();
+      expect(await page.locator('.pulse-dot').first().evaluate(el => getComputedStyle(el).animationName)).toBe('none');
     }
     await noOverflow(page);
   }

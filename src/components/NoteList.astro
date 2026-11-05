@@ -10,9 +10,24 @@ const { notes } = Astro.props;
   <ol class="note-list">
     {notes.map(({ id, data }) => (
       <li>
-        <article class="note-row">
-          <div class="note-date"><time datetime={data.published}>{formatDate(data.published!)}</time><span>{kindLabels[data.kind]}</span></div>
-          <div class="note-summary"><h3><a href={withBase(`/writing/${id}/`)}>{data.title}<Icon name="arrow" size={18} /></a></h3><p>{data.summary}</p><ul class="topic-labels" aria-label="Topics">{data.topics.map(topic => <li>{topic}</li>)}</ul></div>
+        <article class="note-row note-card">
+          <div class="note-card-top">
+            <div class="note-date">
+              <time datetime={data.published}>{formatDate(data.published!)}</time>
+              <span class="meta-dot" aria-hidden="true"></span>
+              <span class="note-kind">{kindLabels[data.kind]}</span>
+            </div>
+            <div class="note-summary">
+              <h3><a href={withBase(`/writing/${id}/`)}>{data.title}</a></h3>
+              <p>{data.summary}</p>
+            </div>
+          </div>
+          <div class="note-card-bottom">
+            <ul class="topic-labels" aria-label="Topics">{data.topics.map(topic => <li>{topic}</li>)}</ul>
+            <a class="note-arrow" href={withBase(`/writing/${id}/`)} aria-hidden="true" tabindex="-1">
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
         </article>
       </li>
     ))}
